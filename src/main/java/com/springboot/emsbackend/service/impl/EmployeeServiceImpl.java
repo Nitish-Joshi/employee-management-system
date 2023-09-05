@@ -2,6 +2,7 @@ package com.springboot.emsbackend.service.impl;
 
 import com.springboot.emsbackend.dto.EmployeeDto;
 import com.springboot.emsbackend.entity.Employee;
+import com.springboot.emsbackend.exception.ResourceNotFoundException;
 import com.springboot.emsbackend.mapper.EmployeeMapper;
 import com.springboot.emsbackend.repository.EmployeeRepository;
 import com.springboot.emsbackend.service.EmployeeService;
@@ -19,5 +20,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = EmployeeMapper.mapToEmployee(employeeDto); // convert employeeDto to employee JPA entity
         Employee savedEmployee = employeeRepository.save(employee); // create a new instance of Employee to store it in our database repository
         return EmployeeMapper.mapToEmployeeDto(savedEmployee); // we return the saved employee back to the client by converting it into EmployeeDto
+    }
+
+    @Override
+    public EmployeeDto getEmployeeById(Long employeeId) {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee with the given id "+ employeeId + " does not exist"));
+        return EmployeeMapper.mapToEmployeeDto(employee);
     }
 }
